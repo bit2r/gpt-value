@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="형환희, 이광춘">
 <meta name="dcterms.date" content="2024-04-15">
 
-<title>재무회계 목적의 가치평가 with R</title>
+<title>재무회계 목적의 가치평가 with R (Financial Accounting Valuation with R)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -48,7 +48,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -57,12 +63,42 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -72,12 +108,12 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">서문</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">서문</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -87,10 +123,10 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">재무회계 목적의 가치평가 with R</a> 
+      <a href="./">재무회계 목적의 가치평가 with R (Financial Accounting Valuation with R)</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -114,8 +150,14 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">금융 데이터 획득</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -127,7 +169,7 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -136,10 +178,12 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#서문" id="toc-서문" class="nav-link active" data-scroll-target="#서문">서문</a>
   <ul class="collapse">
-  <li><a href="#재무회계에서-가치평가의-이유와-유용성" id="toc-재무회계에서-가치평가의-이유와-유용성" class="nav-link" data-scroll-target="#재무회계에서-가치평가의-이유와-유용성">재무회계에서 가치평가의 이유와 유용성</a></li>
+  <li><a href="#재무회계에서-가치평가를-필요로-하는-이유" id="toc-재무회계에서-가치평가를-필요로-하는-이유" class="nav-link" data-scroll-target="#재무회계에서-가치평가를-필요로-하는-이유">재무회계에서 가치평가를 필요로 하는 이유</a></li>
+  <li><a href="#가치평가valuation의-의미와-본-서에서-다루는-사항" id="toc-가치평가valuation의-의미와-본-서에서-다루는-사항" class="nav-link" data-scroll-target="#가치평가valuation의-의미와-본-서에서-다루는-사항">가치평가(Valuation)의 의미와 본 서에서 다루는 사항</a></li>
   <li><a href="#이-책은-왜-존재할까요" id="toc-이-책은-왜-존재할까요" class="nav-link" data-scroll-target="#이-책은-왜-존재할까요">이 책은 왜 존재할까요?</a></li>
   <li><a href="#이-책은-누가-읽어야-하나요" id="toc-이-책은-누가-읽어야-하나요" class="nav-link" data-scroll-target="#이-책은-누가-읽어야-하나요">이 책은 누가 읽어야 하나요?</a></li>
   <li><a href="#무엇을-배울-수-있나요" id="toc-무엇을-배울-수-있나요" class="nav-link" data-scroll-target="#무엇을-배울-수-있나요">무엇을 배울 수 있나요?</a></li>
+  <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license">License</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -149,7 +193,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">재무회계 목적의 가치평가 with R</h1>
+<h1 class="title">재무회계 목적의 가치평가 with R (Financial Accounting Valuation with R)</h1>
 </div>
 
 
@@ -174,12 +218,15 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
+
 
 <section id="서문" class="level1 unnumbered">
 <h1 class="unnumbered">서문</h1>
-<section id="재무회계에서-가치평가의-이유와-유용성" class="level2">
-<h2 class="anchored" data-anchor-id="재무회계에서-가치평가의-이유와-유용성">재무회계에서 가치평가의 이유와 유용성</h2>
+<p>본 서에서는 R의 기초에 해당하는 부분을 설명하지 않습니다. R Coding 기초를 학습하기 위해서는 공익법인 한국R사용자회에서 발간한 챗GPT 코딩<a href="https://r2bit.com/gpt-coding">https://r2bit.com/gpt-coding</a>을 참조하시기 바랍니다.</p>
+<section id="재무회계에서-가치평가를-필요로-하는-이유" class="level2">
+<h2 class="anchored" data-anchor-id="재무회계에서-가치평가를-필요로-하는-이유">재무회계에서 가치평가를 필요로 하는 이유</h2>
 <p>재무회계에서 가치평가는 기업의 자산, 부채, 자분, 그리고 기업 가치를 객관적으로 측정하고 평가하는 과정입니다. 이는 단순히 숫자를 매기는 것이 아니라, 기업의 재무상태와 경영성과를 이해관계자에게 효과적으로 전달하기 위한 중요한 역할을 합니다.</p>
 <ol type="1">
 <li>의사결정 지원</li>
@@ -204,7 +251,20 @@ ul.task-list li input[type="checkbox"] {
 <p>현실적인 기업 가치 반영: 재무제표에 기재된 자산 및 부채 가치는 역사적 원가를 기반으로 하기 때문에 현실적인 기업 가치를 반영하지 못할 수 있습니다. 가치평가는 현실적인 시장 상황을 반영하여 기업 가치를 보다 정확하게 평가할 수 있도록 합니다.</p>
 <p>투자자 및 채권자의 신뢰도 향상: 투자자 및 채권자는 기업의 재무목적 보고서를 통해 투자 및 대출 결정을 내립니다. 가치평가는 투자자 및 채권자에게 보다 정확하고 투명한 정보를 제공하여 기업의 신뢰도를 향상시키는 데 기여합니다.</p>
 <p>경영진의 의사결정 지원: 경영진은 재무목적 보고서를 통해 기업의 재무상태와 경영성과를 파악하고, 향후 경영 전략을 수립합니다. 가치평가는 경영진이 보다 효과적인 의사결정을 내릴 수 있도록 중요한 정보를 제공합니다.</p>
-<p>결론적으로, 재무회계에서 가치평가는 기업의 재무 정보를 보다 정확하고 투명하게 전달하고, 다양한 이해관계자들의 의사결정을 지원하며, 기업 가치 극대화를 위한 중요한 도구입니다.</p>
+<p>그러나, 재무회계에서 가치평가를 하는 가장 직접적인 이유는 재무회계의 결과를 공시하기 전에 회계감사를 받아야 하며 회계감사를 하는 감사인이 가치평가를 하도록 요구하기 때문입니다. 이 때의 가치평가는 감사인의 검토를 받고 적정의견을 받아야 하므로 일반적으로 널리 인정된 방법을 선택하여야 할 수 밖에 없습니다.</p>
+</section>
+<section id="가치평가valuation의-의미와-본-서에서-다루는-사항" class="level2">
+<h2 class="anchored" data-anchor-id="가치평가valuation의-의미와-본-서에서-다루는-사항">가치평가(Valuation)의 의미와 본 서에서 다루는 사항</h2>
+<p>가치평가는 목적에 따라 다양한 의미를 가지며, 평가 방법 또한 목적에 맞게 선택되어야 합니다. 동일한 항목에 대한 가치평가 결과가 목적에 따라서 다르게 평가될 수 있다는 것을 이해하여야 합니다. 가치평가에 대한 흔한 오해로는 가치평가가 평가 대상 항목의 가치를 결정해 주는 일이라고 생각할 수 있으나 그렇지 않는 경우가 더 많습니다. 극단적으로 표현하면 거래(Deal) 목적의 가치평가는 협상에 따라서 이미 결정된 거래가격을 뒷받침하기 위하여 수행되기도 합니다. 재무회계 목적의 가치평가는 기업회계기준(일반적으로 인정된 회계원칙, Generally Accepted Accounting Principles (GAAP))에 적합하여야 하며 결과가 손익계산서(또는 재무상태표)에 평가손익을 수반하게 되므로 일반적으로 인정된 모델이나 방법을 통해 계산하여야 합니다.</p>
+<p>가치평가(Valuation)는는 절대적인 가치를 계산할 수 있다는 의미가 아니라 경영의사결정 또는 시장 지표 등을 합리적으로 반영하여 설명 가능한 수치로 환산한다는 의미가 더 크기 때문에 외부평가인이 발행하는 평가 보고서에는 평가의 고유 한계에 대하여 많이 기술하는 경향이 있습니다.</p>
+<p>가치평가의 방법론은 크게 다음의 세 가지로 구분합니다. 본 서에서는 세번째 이익(현금흐름)접근법을 다루고자 합니다. 이익접근법은 흔히 DCF<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>방법(method)이라고 부릅니다.</p>
+<ol type="1">
+<li><p>시장접근법 : 시장접근법은 회사의 재무상황과 미래 이익창출 가능성을 기초로 시장을 통해 형성되는 회사의 가치로 평가하는 방법입니다. 상장회사의 경우 증권시장에서 형성되는 주가로 회사의 가치를 평가하며, 비상장회사의 가치는 동일한 업종에 속하는 유사 규모 상장기업의 시장가치를 이용하여 상대가치를 산정할 수 있습니다. 그러나, 시장가치 평가방법은 비교대상이 되는 상장회사의 산정시 평가자의 주관이 개입될 여지가 있습니다.</p></li>
+<li><p>자산접근법 : 자산접근법은 회사가 보유하는 자산에서 부채를 차감한 순자산의 가치를 이용하여 평가 대상회사의 가치를 결정하는 가치평가 접근법으로 취득원가로 기록된 자산과 부채의 가액을 공정가치로 조정하여 가치를 평가하는 방법입니다. 이 평가방법은 평가방법이 비교적 단순하고 객관적이라는 장점을 가지고 있으나, 회사라는 실체가 미래의 이익 또는 현금흐름창출을 목적으로 존재하는 영속체(Going Concern)라는 점에서는 이익창출능력을 반영하지 못하는 단점을 지니고 있습니다.</p></li>
+<li><p>이익(현금흐름)접근법 : 이익접근법은 회사의 현재 재무상황보다는 회사가 보유한 유무형의 자산을 가지고 향후에 얼마만큼의 이익(또는 현금흐름)을 실현시킬 수 있는가라는 관점에서 미래의 이익창출능력을 회사의 가치로 평가하는 방법입니다. 대표적인 이익접근법인 현금흐름할인법(이하 “DCF법”)은 이론적으로 가장 우수한 방법이나, 회사의 가치를 결정하는 여러가지 요소의 결정시 주관이 개입될 여지가 있습니다.</p></li>
+</ol>
+<p>DCF법에 의하면 <strong>Valuation은 미래에 들어올 것으로 예상되는 돈을 현재가치로 환산한 것입니다.</strong></p>
+<p><span class="math display">\[ Value = { Cash \ Flow \over Discount \ Rate } \]</span></p>
 </section>
 <section id="이-책은-왜-존재할까요" class="level2">
 <h2 class="anchored" data-anchor-id="이-책은-왜-존재할까요">이 책은 왜 존재할까요?</h2>
@@ -215,8 +275,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="이-책은-누가-읽어야-하나요">이 책은 누가 읽어야 하나요?</h2>
 <p>이 책은 세 가지 독자를 대상으로 집필했습니다.</p>
 <ol type="1">
-<li><p>학부부터 대학원까지 재무회계 목적의 가치평가 연구를 수행하는 데 필요한 기본 도구를 익히고자 하는 학생. 이 책의 구조는 충분히 단순하여 독학용으로도 충분합니다.</p></li>
-<li><p>이 책은 재무회계 목적 가치평가에 사용할 적절한 도구를 찾고 있는 공인회계사에게 적합합니다. 많은 예시를 제공하고 쉽게 조정하거나 확장할 수 있는 직관적인 설명에 중점을 두었습니다. 각 장의 마지막에는 독자들이 더 깊이 파고들 수 있도록 영감을 주는 연습 문제를 제공합니다.</p></li>
+<li><p>학부부터 대학원까지 재무회계 목적의 가치평가 연구를 수행하는 데 필요한 기본 도구를 익히고자 하는 학생. 이 책의 구조는 단순하여 독학용으로도 충분합니다.</p></li>
+<li><p>이 책은 재무회계 목적 가치평가에 사용할 적절한 도구를 찾고 있는 공인회계사에게 적합합니다. 많은 예시를 제공하고 쉽게 조정하거나 확장할 수 있는 직관적인 설명에 중점을 두었습니다.</p></li>
 <li><p>회사의 회계팀에서 재무회계를 직접 수행하고 회계처리하는 회계 담당자에게 필요할 수 있습니다. 외부 평가기관에 의존하기만 하는 회사의 회계팀 및 재무담당이사는 직접 가치평가 모델링을 수행할 수 없으므로 외부 평가기관에 의뢰하고 결과를 기다려야 할 수 밖에 없는 상황입니다. 또한 외부 평가기관의 가치평가 결과에 대하여 검증할 방법이 없어 막연한 답답함을 느낄 수 있습니다. 이러한 상황에서 R을 활용하여 정교한 모델링까지 하지 않더라도 약식으로 계산한 결과를 비교하는 방법으로 사용할 수 있기를 희망합니다.</p></li>
 </ol>
 </section>
@@ -225,9 +285,18 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>다 쓰고 나서 정리</li>
 </ul>
+</section>
+<section id="license" class="level2">
+<h2 class="anchored" data-anchor-id="license">License</h2>
 
 
 </section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Discounted cash flow (DCF) is a valuation method used to estimate the intrinsic value of an investment based on the sum of its future expected cash flows discounted to present value.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
@@ -310,10 +379,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -323,8 +391,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -337,6 +414,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -380,6 +576,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -405,6 +602,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -468,12 +691,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./intro.html" class="pagination-link">
+      <a href="./intro.html" class="pagination-link" aria-label="<span class='chapter-number'>1</span>&nbsp; <span class='chapter-title'>들어가며</span>">
         <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">들어가며</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

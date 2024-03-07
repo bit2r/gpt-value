@@ -1,0 +1,182 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# 금융 데이터 획득
+  
+## 주가 데이터 패키지로 받기
+    
+### tidyquant 패키지
+    
+R 패키지를 처음 사용하려면 `install.packages("tidyquant")` 명령어를 한 번 실행해야 합니다. tidyquant 사용에 문제가 있을 경우 해당 패키지 설명서를 참조하십시오.
+    
+    
+```{r}
+library(tidyverse)
+library(tidyquant)
+```
+   
+   
+먼저, Apple 주식 (AAPL)과 같은 하나의 종목 심볼에 대한 일일 가격 데이터를 데이터 제공자 Yahoo!Finance에서 직접 다운로드하겠습니다. 데이터를 다운로드하기 위해 `tq_get` 명령어를 사용할 수 있습니다.
+   
+만약 tq_get 명령어 사용 방법을 모르는 경우, `?tq_get` 명령어를 입력하여 도움말 파일을 확인하십시오. 특히 설명서의 예시 부분을 꼼꼼히 살펴보는 것을 추천합니다.
+   
+```{r}
+prices <- tq_get("005930.KS",
+  get = "stock.prices",
+  from = "2022-01-01",
+  to = "2023-12-31"
+)
+
+prices
+```
+  
+  
+
+  
+## 주가 데이터 웹스크래핑으로 받기
+   
+대한민국의 상장회사 주가 데이터를 받기 위하여 네이버[https://www.naver.com/](https://www.naver.com/) 검색 사이트를 활용하는 것이 가장 편한 방법이 될 수도 있습니다.   
+  
+원천 주가 데이터는 한국 거래소의 API를 활용하여 받아야 할 수 있으나 일반적으로 주가 데이터는 Raw data 형태를 그대로 사용하기에는 무리가 있습니다. 일례로 주식분할과 같은 사건이 발생하면 1개의 주식이 여러개로 나누어지면서 주가가 큰 폭으로 줄어들게 됩니다. 시가총액은 동일한데 주식 개당 가치가 어느 날 갑자기 감소하게 되면서 주식분할 일자 이전과 이후의 주식가격은 비교 가능성을 잃게 됩니다. 따라서 이전 주가에 주식분할 효과를 부여하여 수정한 수정 주가를 사용하여야 비교 분석이 가능합니다. 
+    
+네이버 검색 사이트는 수정 주가 데이터를 제공하므로 이 데이터를 가져다가 가공하는 것이 대한민국 거래소에서 거래되는 주식 가격을 얻는 좋은 방법이 될 수 있습니다.   
+   
+   
+```{r}
+# 패키지 인스톨
+
+# install.packages("rvest")
+# install.packages("R6")
+# install.packages("httr")
+
+# 라이브러리 불러오기
+
+library(rvest)
+library(R6)
+library(httr)
+library(tidyverse)
+
+# user_agent 확인URL: http://httpbin.org/user-agent
+# user_agent 설정하기
+ua <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+
+# naver 금융 사이트 설정
+ticker <- '066570'
+
+naver_stock <- function(ticker, page){
+
+	stock_df <- tibble(날짜 = ymd("2024-01-01"),
+					   종가 = 1,
+					   전일비 = 1,
+					   시가 = 1,
+					   고가 = 1,
+					   저가 = 1,
+					   거래량 = 1)
+
+	for (i in 1:page){
+		url <- paste0('http://finance.naver.com/item/sise_day.nhn?code=',ticker,'&page=',i)
+
+		# 자료가져오기
+		price <- GET(url, user_agent(ua)) %>% read_html() %>% html_nodes('.type2') %>% html_table
+
+		# dataframe으로 변환하기
+		stock_price <- data.frame(price)
+		stock_price <- stock_price %>% 
+			as_tibble() %>% 
+			na.omit() %>% 
+			filter(날짜!="")
+
+		stock_price <- stock_price %>% 
+			mutate(across(종가:거래량, ~ gsub(",", "", .x))) %>%
+			mutate(across(종가:거래량, ~ as.numeric(.x))) %>%
+			mutate(날짜 = ymd(날짜))
+
+		stock_df <- bind_rows(stock_df, stock_price)
+	}
+
+	stock_df <- stock_df %>% 
+		slice(-1)
+
+	return(stock_df)
+}
+
+stock_data_raw <- naver_stock(ticker, 30)
+stock_data_raw
+
+start <- ymd('2022-01-01')
+end <- ymd('2023-12-31')
+
+stock_data <- stock_data_raw %>% 
+	filter(날짜 > start & 날짜 < end)
+
+stock_data
+```
+
+
+
+
+```{r}
+# rvest 패키지를 설치하고 라이브러리를 불러옵니다.
+# install.packages("rvest")
+library(rvest)
+
+# 한국거래소 웹사이트의 특정 페이지 URL을 설정합니다.
+krx_url <- "http://data.krx.co.kr/contents/MDC/MAIN/main/index.cmd?locale=en"
+
+# 해당 페이지의 HTML을 읽어옵니다.
+page <- read_html(krx_url)
+
+# 원하는 데이터가 포함된 HTML 요소를 찾아내어 내용을 추출합니다.
+# 이 예시에서는 실제 웹사이트의 구조를 알아야 정확한 선택자(selector)를 사용할 수 있습니다.
+issued_shares <- page %>%
+  html_nodes("적절한 선택자") %>%
+  html_text()
+
+# 추출한 데이터를 출력합니다.
+print(issued_shares)
+
+```
+
+
+## 시가총액 데이터 받기
+
+
+```{r}
+library(httr)
+library(rvest)
+library(readr)
+
+gen_otp_url =
+  'http://data.krx.co.kr/comm/fileDn/GenerateOTP/generate.cmd'
+gen_otp_data = list(
+  mktId = 'STK',
+  trdDd = '20231228',
+  money = '1',
+  csvxls_isNo = 'false',
+  name = 'fileDown',
+  url = 'dbms/MDC/STAT/standard/MDCSTAT03901'
+)
+otp = POST(gen_otp_url, query = gen_otp_data) %>%
+  read_html() %>%
+  html_text()
+```
+
+
+
+```{r}
+down_url = 'http://data.krx.co.kr/comm/fileDn/download_csv/download.cmd'
+down_sector_KS = POST(down_url, query = list(code = otp),
+                   add_headers(referer = gen_otp_url)) %>%
+  read_html(encoding = 'EUC-KR') %>%
+  html_text() %>%
+  read_csv()
+
+print(down_sector_KS)
+```
+
+
+
+
+
