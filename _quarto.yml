@@ -9,6 +9,7 @@ book:
   chapters:
     - index.qmd
     - intro.qmd
+    - fairvalue.qmd
     - data.qmd
     - summary.qmd
     - references.qmd
@@ -17,7 +18,7 @@ bibliography: references.bib
 
 format:
   html:
-    theme: cosmo
+    theme: cosmo햣
   pdf:
     documentclass: scrreprt
 
